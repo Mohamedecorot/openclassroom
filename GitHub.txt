@@ -1,0 +1,100 @@
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/Mohamedecorot/CI_sitevitrine.git
+git push -u origin main
+
+https://github.com/
+
+CREER SON COMPTE
+ET SE CONNECTER A SON COMPTE github.com
+
+SI ON A BIEN CREE SON COMPTE, ON PEUT ACCEDER A SON ESPACE github.com AVEC UNE URL COMME CA:
+
+https://github.com/testlonghai
+
+
+
+CREER UN REPOSITORY SUR github.com
+ET ENSUITE PRENDRE L'URL EN HTTPS
+ET ENTRER LA LIGNE DE COMMANDE DANS LE TERMINAL VSCODE
+
+git clone https://github.com/testlonghai/projet.git
+
+
+ON A DANS NOTRE DOSSIER simplon UN DOSSIER projet
+ON VA CODER DANS LE DOSSIER projet
+ET ENSUITE, ON VA CREER DES SAUVEGARDES
+ET ENSUITE, ON VA TRANSFERER CES SAUVEGARDES SUR github.com
+
+
+POUR CONFIGURER GIT 
+
+OUVRIR UN TERMINAL DANS LE DOSSIER projet
+2 MANIERES:
+* CLIQUER SUR LE DOSSIER projet ET DANS LE MENU CONTEXTUEL
+OUVRIR Open in Terminal
+* DANS LE MENU DE VSCODE Terminal / New Terminal
+    ET ENSUITE CHANGER DE DOSSIER
+    cd projet
+
+UNE FOIS QUE LE TERMINAL EST DANS LE BON DOSSIER
+
+git config user.name testlonghai
+
+git config user.email testlonghai@applh.com
+
+REUSSIR A OUVRIR LE FICHIER .git/config
+=> PAS POSSIBLE AVEC VSCODE
+=> PASSER VOTRE EXPLORATEUR DE FICHIER
+
+ENSUITE MODIFIER LE FICHIER .git/config
+
+	url = https://votreusernamegit:VOTREMOTDEPASSE@github.com/testlonghai/projet.git
+
+
+
+
+
+GIT: DEPOT LOCAL
+
+Pour éviter de se définir a chaque fois: 
+git config --global user.name "Mohamed Guerroui"
+git config --global user.email "guerroui.m@gmail.com"
+
+On créé un répertoire et on rentre dedans
+Ensuite on initialise le projet avec git init
+
+a tout moment on peut faire un git status pour savoir où on en est
+
+Pour enregistrer l'état du projet actuel, on va dire a git de prendre une photo de tous les fichiers
+cela se fait en deux étapes
+la selection des fichiers à l'aide de la commande git add nomdufichier
+la prise de ce fichier avec le commit à l'aide de la commande git commit -m "commentaire"
+
+La commande git log permet de nous donner un historique de ce qui a été fait (du plus récent au plus ancien)
+
+Les branches sont des copies du projet qui permettent de travailler sans crainte
+Pour en créer une, il suffit de faire git branch nomdelabranche
+pour lister les branches : git branch
+pour changer de branch git checkout nomdelabranche
+
+Pour rapatrier cela sur la branche principale (master), il y a 3 étapes
+1. revenir sur la branche principale: git checkout master
+2. fusionner les commits: git merge nomdelabranchearapatrier
+3. option facultative: supprimer la branche: git branch -d nomdelabrancherapatrier
+
+GITHUB: DEPOT DISTANT
+
+Ensuite pour envoyer notre code sur le dépot distant, on créé un repository sur github
+et on va créé un pont entre le dépot distant et le dépot local avec la commande git remote add origin https://github.com/Mohamedecorot/test.git
+
+Ensuite pour envoyer notre code sur le dépot distant, on utilise: git push origin master (origin étant le label du dépot et master le nom de la branche à déposer)
+
+Travail en groupe
+
+La première étape c'est que le gens doivent se brancher sur le dépot distant avec la commande git remote add urldudépot
+ensuite les gens font un git pull origin master, cela va leur permettre de recuperer le projet
+
+maintenant si je veux donner les droits d'écriture, je vais dans setting (du repository) et mettre le pseudo des personnes qui vont être autorisé à modifier le dépot distant
