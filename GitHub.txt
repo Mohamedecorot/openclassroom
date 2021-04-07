@@ -98,3 +98,4 @@ La première étape c'est que le gens doivent se brancher sur le dépot distant 
 ensuite les gens font un git pull origin master, cela va leur permettre de recuperer le projet
 
 maintenant si je veux donner les droits d'écriture, je vais dans setting (du repository) et mettre le pseudo des personnes qui vont être autorisé à modifier le dépot distant
+
