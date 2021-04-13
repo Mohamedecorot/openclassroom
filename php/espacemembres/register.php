@@ -1,5 +1,27 @@
 <?php require 'inc/header.php'; ?>
 
+<?php
+if (!empty($_POST)) {
+
+    $errors = [];
+
+    if(empty($_POST['username']) || !preg_match('/^[a-zA-Z0-9_]+$/', $_POST['username'])) {
+        $errors['username'] = "votre pseudo n'est pas valide";
+    }
+
+    if(empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = "votre email n'est pas valide";
+    }
+
+    if(empty($_POST['password']) || $_POST['password'] != $_POST['password_confirm'] ) {
+        $errors['password'] = "vous devez rentrer un mot de passe valide";
+    }
+
+    debug($errors);
+}
+
+?>
+
 <h1>S'inscrire</h1>
 
 <form action="" method="POST">
