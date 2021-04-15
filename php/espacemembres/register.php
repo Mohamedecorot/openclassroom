@@ -1,6 +1,7 @@
-<?php require 'inc/header.php'; ?>
-
 <?php
+require_once 'inc/functions.php';
+session_start();
+
 // si le formulaire d'inscription n'est pas vide
 if (!empty($_POST)) {
 
@@ -40,15 +41,26 @@ if (!empty($_POST)) {
 
     if(empty($error)) {
         //ajoute des utilisateurs
-        $req = $pdo->prepare("INSERT INTO membres SET username = ?, password = ?, email = ?");
+        $req = $pdo->prepare("INSERT INTO membres SET username = ?, password = ?, email = ?, confirmation_token = ?");
 
         //cryptage du mot de passe de l'utilisateur
         $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-        $req->execute([$_POST['username'], $password, $_POST['email']]);
+
+        // Pour la validation de compte par email
+        $token = str_random(60);
+        $req->execute([$_POST['username'], $password, $_POST['email'], $token]);
+        $user_id = $pdo->lastInsertId();
+        mail($_POST['email'], 'Confirmation de votre compte', "Afin de valider votre compte, merci de cliquer sur ce lien\n\nhttp://localhost:8000/confirm.php?id=$user_id&token=$token");
+        $_SESSION['flash']['success'] = "un email de confirmation vous a été envoyé pour valider pour compte";
+        header('Location: login.php');
+        exit();
     }
 }
 
 ?>
+
+<?php require 'inc/header.php'; ?>
+
 
 <h1>S'inscrire</h1>
 

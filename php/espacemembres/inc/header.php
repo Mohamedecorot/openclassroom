@@ -1,4 +1,8 @@
-<?php require 'functions.php' ?>
+<?php
+  if(session_status() == PHP_SESSION_NONE) {
+    session_start();
+  }
+?>
 
 <!doctype html>
 <html lang="en">
@@ -34,9 +38,12 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="register.php">S'inscrire</a></li>
-            <li><a href="login.php">Se connecter</a></li>
-            <li><a href="#">Contact</a></li>
+            <?php if(isset($_SESSION['auth'])): ?>
+              <li><a href="logout.php">Se déconnecter</a></li>
+            <?php else: ?>
+              <li><a href="register.php">S'inscrire</a></li>
+              <li><a href="login.php">Se connecter</a></li>
+            <?php endif; ?>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -44,4 +51,11 @@
 
     <div class="container">
 
-
+    <?php if(isset($_SESSION['flash'])): ?>
+      <?php foreach($_SESSION['flash'] as $type => $message): ?>
+        <div class="alert alert-<?= $type; ?>">
+          <?= $message; ?>
+        </div>
+      <?php endforeach; ?>
+      <?php unset($_SESSION['flash']); ?>
+    <?php endif; ?>
