@@ -1,3 +1,5 @@
+<?php require 'inc/header.php'; ?>
+
 <?php
 if(!empty($_POST) && !empty($_POST['username']) && !empty($_POST['password'])){
     require_once 'inc/connexionDb.php';
@@ -5,7 +7,7 @@ if(!empty($_POST) && !empty($_POST['username']) && !empty($_POST['password'])){
     $req->execute(['username' => $_POST['username']]);
     $user = $req->fetch();
     if($user == null){
-        $_SESSION['flash']['danger'] = 'Identifiant ou mot de passe incorrecte';
+        $_SESSION['flash']['success'] = 'Identifiant ou mot de passe incorrecte';
     } elseif (password_verify($_POST['password'], $user->password)){
         session_start();
         $_SESSION['auth'] = $user;
@@ -17,7 +19,6 @@ if(!empty($_POST) && !empty($_POST['username']) && !empty($_POST['password'])){
     }
 }
 ?>
-<?php require 'inc/header.php'; ?>
 
 <h1>Se connecter</h1>
 
