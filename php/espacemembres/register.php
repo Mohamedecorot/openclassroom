@@ -2,6 +2,14 @@
 require_once 'inc/functions.php';
 session_start();
 
+
+// Je veux récupérer le premier utilisateur
+require 'class/Database.php';
+$db = new Database('root', 'root', 'espacemembres');
+$user = $db->query('SELECT * FROM membres')->fetchAll();
+debug($user);
+die();
+
 // si le formulaire d'inscription n'est pas vide
 if (!empty($_POST)) {
 
