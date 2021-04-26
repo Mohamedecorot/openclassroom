@@ -1,11 +1,8 @@
 <?php
-require_once 'inc/functions.php';
-session_start();
-
+require_once 'inc/bootstrap.php';
 
 // Je veux récupérer le premier utilisateur
-require 'class/Database.php';
-$db = new Database('root', 'root', 'espacemembres');
+$db = App::getDatabase();
 $user = $db->query('SELECT * FROM membres')->fetchAll();
 debug($user);
 die();
