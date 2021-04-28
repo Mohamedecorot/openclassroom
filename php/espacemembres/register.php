@@ -1,64 +1,37 @@
 <?php
 require_once 'inc/bootstrap.php';
 
-// Je veux récupérer le premier utilisateur
-$db = App::getDatabase();
-$user = $db->query('SELECT * FROM membres')->fetchAll();
-debug($user);
-die();
-
 // si le formulaire d'inscription n'est pas vide
 if (!empty($_POST)) {
 
     $errors = [];
-
-    //connexion à la bdd
-    require_once 'inc/connexionDb.php';
-
-    // verification des données
-    if(empty($_POST['username']) || !preg_match('/^[a-zA-Z0-9_]+$/', $_POST['username'])) {
-        $errors['username'] = "votre pseudo n'est pas valide";
-    } else {
-        // vérification si le pseudo est disponible
-        $req = $pdo->prepare('SELECT id FROM membres WHERE username = ?');
-        $req->execute([$_POST['username']]);
-        $user = $req->fetch();
-        if($user) {
-            $errors['username'] = 'Ce pseudo est deja utilisé';
-        }
+    $db = App::getDatabase();
+    $validator = new Validator($_POST);
+    $validator->isAlpha('username', "Votre pseudo n'est pas valide (alphanumérique)");
+    if($validator->isValid()) {
+        $validator->isUniq('username', $db, 'membres', 'ce pseudo est déjà pris');
     }
-
-    if(empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = "votre email n'est pas valide";
-    } else {
-        // vérification si l'email est disponible
-        $req = $pdo->prepare('SELECT id FROM membres WHERE email = ?');
-        $req->execute([$_POST['email']]);
-        $user = $req->fetch();
-        if($user) {
-            $errors['username'] = 'Cet email est deja utilisé pour un autre compte';
-        }
+    $validator->isEmail('email', "votre email n'est pas valide");
+    if($validator->isValid()) {
+        $validator->isUniq('email', $db, 'membres', 'Cet email est deja utilisé pour un autre compte');
     }
-    if(empty($_POST['password']) || $_POST['password'] != $_POST['password_confirm'] ) {
-        $errors['password'] = "vous devez rentrer un mot de passe valide";
-    }
+    $validator->isConfirmed('password',"vous devez rentrer un mot de passe valide");
 
-
-    if(empty($error)) {
-        //ajoute des utilisateurs
-        $req = $pdo->prepare("INSERT INTO membres SET username = ?, password = ?, email = ?, confirmation_token = ?");
-
+    if($validator->isValid()) {
         //cryptage du mot de passe de l'utilisateur
         $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
         // Pour la validation de compte par email
         $token = str_random(60);
-        $req->execute([$_POST['username'], $password, $_POST['email'], $token]);
-        $user_id = $pdo->lastInsertId();
+        $db->query("INSERT INTO membres SET username = ?, password = ?, email = ?, confirmation_token = ?", [$_POST['username'], $password, $_POST['email'], $token]);
+
+        $user_id = $db->lastInsertId();
         mail($_POST['email'], 'Confirmation de votre compte', "Afin de valider votre compte, merci de cliquer sur ce lien\n\nhttp://localhost:8000/confirm.php?id=$user_id&token=$token");
         $_SESSION['flash']['success'] = "un email de confirmation vous a été envoyé pour valider pour compte";
         header('Location: login.php');
         exit();
+    } else {
+        $errors = $validator->getErrors();
     }
 }
 
