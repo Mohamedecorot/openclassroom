@@ -18,15 +18,10 @@ if (!empty($_POST)) {
     $validator->isConfirmed('password',"vous devez rentrer un mot de passe valide");
 
     if($validator->isValid()) {
-        //cryptage du mot de passe de l'utilisateur
-        $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
-        // Pour la validation de compte par email
-        $token = str_random(60);
-        $db->query("INSERT INTO membres SET username = ?, password = ?, email = ?, confirmation_token = ?", [$_POST['username'], $password, $_POST['email'], $token]);
+        $auth = new Auth($db);
+        $auth->register($_POST['username'], $_POST['password'], $_POST['email']);
 
-        $user_id = $db->lastInsertId();
-        mail($_POST['email'], 'Confirmation de votre compte', "Afin de valider votre compte, merci de cliquer sur ce lien\n\nhttp://localhost:8000/confirm.php?id=$user_id&token=$token");
         $_SESSION['flash']['success'] = "un email de confirmation vous a été envoyé pour valider pour compte";
         header('Location: login.php');
         exit();
