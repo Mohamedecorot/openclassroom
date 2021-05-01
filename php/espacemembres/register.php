@@ -21,10 +21,8 @@ if (!empty($_POST)) {
 
         $auth = new Auth($db);
         $auth->register($_POST['username'], $_POST['password'], $_POST['email']);
-
-        $_SESSION['flash']['success'] = "un email de confirmation vous a été envoyé pour valider pour compte";
-        header('Location: login.php');
-        exit();
+        Session::getInstance()->setFlash('success', "un email de confirmation vous a été envoyé pour valider pour compte");
+        App::redirect('login.php');
     } else {
         $errors = $validator->getErrors();
     }
