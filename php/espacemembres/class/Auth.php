@@ -1,29 +1,42 @@
 <?php
 class Auth{
 
-    private $db;
+    private $options = [
+        'restrinction_msg' => "Vous n'avez pas le droit d'accéder à cette page"
+    ];
 
-    public function __construct($db){
-        $this->db = $db;
+    private $session;
+
+    public function __construct($session, $options = []){
+        $this->options = array_merge($this->options, $options);
+        $this->session = $session;
     }
 
-    public function register($username, $password, $email) {
+    public function register($db, $username, $password, $email) {
         $password = password_hash($password, PASSWORD_BCRYPT);
         $token = Str::random(60);
-        $this->db->query("INSERT INTO membres SET username = ?, password = ?, email = ?, confirmation_token = ?", [$username, $password, $email, $token]);
-        $user_id = $this->db->lastInsertId();
+        $db->query("INSERT INTO membres SET username = ?, password = ?, email = ?, confirmation_token = ?", [$username, $password, $email, $token]);
+        $user_id = $db->lastInsertId();
         mail($email, 'Confirmation de votre compte', "Afin de valider votre compte merci de cliquer sur ce lien\n\nhttp://localhost:8000/confirm.php?id=$user_id&token=$token");
     }
 
-    public function confirm($user_id, $token, $session) {
-        $user = $this->db->query('SELECT * FROM membres WHERE id = ?', [$user_id])->fetch();
+    public function confirm($db, $user_id, $token) {
+        $user = $db->query('SELECT * FROM membres WHERE id = ?', [$user_id])->fetch();
 
         if($user && $user->confirmation_token == $token) {
-            $this->db->query('UPDATE membres SET confirmation_token = NULL, confirmed_at = NOW() WHERE id = ?', [$user_id]);
-            $session->write('auth', $user);
+            $db->query('UPDATE membres SET confirmation_token = NULL, confirmed_at = NOW() WHERE id = ?', [$user_id]);
+            $this->session->write('auth', $user);
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function restrict(){
+        if(!$this->session->read('auth')){
+            $this->session->setFlash('danger', $this->option['restrinction_msg']);
+            header('Location: login.php');
+            exit();
         }
     }
 

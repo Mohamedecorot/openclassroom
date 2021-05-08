@@ -1,6 +1,6 @@
 <?php
-require 'inc/functions.php';
-logged_only();
+require 'inc/bootstrap.php';
+App::getAuth()->restrict();
 if(!empty($_POST)){
     if(empty($_POST['password']) || $_POST['password'] != $_POST['password_confirm']){
         $_SESSION['flash']['danger'] = "Les mots de passes ne correspondent pas";
