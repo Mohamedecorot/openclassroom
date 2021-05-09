@@ -1,32 +1,20 @@
 <?php require 'inc/header.php'; ?>
 
 <?php
-require_once 'inc/functions.php';
-reconnect_from_cookie();
-if(isset($_SESSION['auth'])){
-    header('Location: account.php');
-    exit();
-}
+require_once 'inc/bootstrap.php';
+$auth = App::getAuth();
+$db = App::getDatabase();
+$auth->connectFromCookie($db);
+
+
 if(!empty($_POST) && !empty($_POST['username']) && !empty($_POST['password'])){
-    require_once 'inc/connexionDb.php';
-    $req = $pdo->prepare('SELECT * FROM membres WHERE (username = :username OR email = :username) AND confirmed_at IS NOT NULL');
-    $req->execute(['username' => $_POST['username']]);
-    $user = $req->fetch();
-    if($user == null){
-        $_SESSION['flash']['success'] = 'Identifiant ou mot de passe incorrecte';
-    } elseif (password_verify($_POST['password'], $user->password)){
-        session_start();
-        $_SESSION['auth'] = $user;
-        $_SESSION['flash']['success'] = 'Vous êtes maintenant connecté';
-        if($_POST['remember']){
-            $remember_token = str_random(250);
-            $pdo->prepare('UPDATE membres SET remember_token = ? WHERE id = ?')->execute([$remember_token, $user->id]);
-            setcookie('remember', $user->id . '==' . $remember_token . sha1($user->id . 'momococo'), time() + 60 * 60 * 24 * 7);
-        }
-        header('Location: account.php');
-        exit();
+    $user = $auth->login($db, $_POST['username'], $_POST['password'], isset($_POST['remember']));
+    $session = Session::getInstance();
+    if($user) {
+        $session->setFlash('success', "vous êtes maintenant connecté");
+        App::redirect('account.php');
     } else {
-        $_SESSION['flash']['danger'] = 'Identifiant ou mot de passe incorrecte';
+        $session->setFlash('danger', "Identifiant ou mot de passe incorrecte");
     }
 }
 ?>
