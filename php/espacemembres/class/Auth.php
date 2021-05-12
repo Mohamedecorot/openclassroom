@@ -89,4 +89,9 @@ class Auth{
         $db->query('UPDATE users SET remember_token = ? WHERE id = ?', [$remember_token, $user_id]);
         setcookie('remember', $user_id . '==' . $remember_token .sha1($user_id . 'momococo'), time() + 60 * 60 * 24 * 7);
     }
+
+    public function logout() {
+        setcookie('remember', NULL, -1);
+        $this->session->delete('auth');
+    }
 }
