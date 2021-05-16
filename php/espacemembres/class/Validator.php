@@ -40,7 +40,7 @@ class Validator
         return true;
     }
 
-    public function isConfirmed($field, $errorMsg) {
+    public function isConfirmed($field, $errorMsg = '') {
         if(empty($this->getField($field)) || $this->getField($field) != $this->getField($field . '_confirm')) {
             $this->errors[$field] = $errorMsg;
         }
